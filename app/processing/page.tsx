@@ -5,20 +5,18 @@ import { useRouter } from "next/navigation";
 import AppLayout from "@/components/layout/AppLayout";
 
 const processingSteps = [
-    { id: 1, label: "Analyzing Request", description: "Understanding your complaint details..." },
-    { id: 2, label: "Categorizing", description: "Identifying the appropriate category..." },
-    { id: 3, label: "Detecting Priority", description: "Assessing urgency level..." },
-    { id: 4, label: "Finding Department", description: "Routing to the right team..." },
-    { id: 5, label: "Complete", description: "Your request has been submitted!" },
+    { text: "Analyzing request...", icon: "🔍" },
+    { text: "Identifying department...", icon: "🏛️" },
+    { text: "Routing to department...", icon: "📨" },
 ];
 
 export default function ProcessingPage() {
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState(0);
-    const [progress, setProgress] = useState(0);
+    const [isComplete, setIsComplete] = useState(false);
 
     useEffect(() => {
-        // Animate through steps
+        // Cycle through steps every 600ms
         const stepInterval = setInterval(() => {
             setCurrentStep((prev) => {
                 if (prev < processingSteps.length - 1) {
@@ -26,26 +24,21 @@ export default function ProcessingPage() {
                 }
                 return prev;
             });
-        }, 800);
+        }, 600);
 
-        // Progress bar animation
-        const progressInterval = setInterval(() => {
-            setProgress((prev) => {
-                if (prev < 100) {
-                    return prev + 2;
-                }
-                return prev;
-            });
-        }, 60);
+        // Mark complete after all steps
+        const completeTimer = setTimeout(() => {
+            setIsComplete(true);
+        }, 1800);
 
-        // Redirect after completion
+        // Redirect after ~2 seconds total
         const redirectTimer = setTimeout(() => {
             router.push("/dashboard");
-        }, 4500);
+        }, 2500);
 
         return () => {
             clearInterval(stepInterval);
-            clearInterval(progressInterval);
+            clearTimeout(completeTimer);
             clearTimeout(redirectTimer);
         };
     }, [router]);
@@ -53,100 +46,110 @@ export default function ProcessingPage() {
     return (
         <AppLayout>
             <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
-                <div className="max-w-md w-full text-center">
-                    {/* AI Processing Animation */}
-                    <div className="relative mb-8">
-                        {/* Outer Ring */}
-                        <div className="w-32 h-32 mx-auto rounded-full border-4 border-cyan-500/20 relative">
-                            {/* Spinning Ring */}
-                            <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-cyan-500 animate-spin" />
+                <div className="max-w-sm w-full text-center">
+                    {/* AI Brain Animation */}
+                    <div className="relative mb-10">
+                        {/* Outer pulsing rings */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-48 h-48 rounded-full border border-cyan-500/10 animate-ping" style={{ animationDuration: "2s" }} />
+                        </div>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-40 h-40 rounded-full border border-cyan-500/20 animate-ping" style={{ animationDuration: "1.5s" }} />
+                        </div>
 
-                            {/* Inner Circle */}
-                            <div className="absolute inset-4 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-600/20 flex items-center justify-center backdrop-blur-sm">
-                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
-                                    {currentStep < processingSteps.length - 1 ? (
-                                        <svg className="w-8 h-8 text-white animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        {/* Spinning border */}
+                        <div className="relative w-32 h-32 mx-auto">
+                            <div className="absolute inset-0 rounded-full border-4 border-cyan-500/20" />
+                            <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-cyan-400 border-r-blue-500 animate-spin" style={{ animationDuration: "1s" }} />
+
+                            {/* Center icon */}
+                            <div className="absolute inset-2 rounded-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+                                <div className={`w-20 h-20 rounded-full flex items-center justify-center transition-all duration-500 ${isComplete
+                                        ? "bg-gradient-to-br from-green-500 to-emerald-600 scale-110"
+                                        : "bg-gradient-to-br from-cyan-500 to-blue-600"
+                                    }`}>
+                                    {isComplete ? (
+                                        <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                         </svg>
                                     ) : (
-                                        <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                        <svg className="w-10 h-10 text-white animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 15.5m14.8-.2l-1.3 3.9c-.09.27-.336.45-.62.45H6.12a.646.646 0 01-.62-.45L5.2 15.5" />
                                         </svg>
                                     )}
                                 </div>
                             </div>
                         </div>
-
-                        {/* Pulsing Dots */}
-                        <div className="absolute -inset-4 flex items-center justify-center pointer-events-none">
-                            <div className="w-40 h-40 rounded-full border border-cyan-500/20 animate-ping opacity-20" />
-                        </div>
                     </div>
 
-                    {/* Current Step Info */}
-                    <h2 className="text-2xl font-bold text-white mb-2">
-                        {processingSteps[currentStep]?.label}
-                    </h2>
-                    <p className="text-slate-400 mb-8">
-                        {processingSteps[currentStep]?.description}
-                    </p>
-
-                    {/* Progress Bar */}
-                    <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden mb-6">
-                        <div
-                            className="h-full bg-gradient-to-r from-cyan-500 to-blue-600 transition-all duration-100 ease-out"
-                            style={{ width: `${progress}%` }}
-                        />
+                    {/* Status Text */}
+                    <div className="mb-8">
+                        {isComplete ? (
+                            <>
+                                <h2 className="text-2xl font-bold text-white mb-2">Request Submitted!</h2>
+                                <p className="text-green-400">Redirecting to dashboard...</p>
+                            </>
+                        ) : (
+                            <>
+                                <h2 className="text-2xl font-bold text-white mb-3 flex items-center justify-center gap-3">
+                                    <span className="text-3xl">{processingSteps[currentStep]?.icon}</span>
+                                    AI Processing
+                                </h2>
+                                <p className="text-lg text-cyan-400 animate-pulse">
+                                    {processingSteps[currentStep]?.text}
+                                </p>
+                            </>
+                        )}
                     </div>
 
-                    {/* Steps List */}
-                    <div className="space-y-3 text-left">
+                    {/* Progress Steps */}
+                    <div className="flex items-center justify-center gap-3 mb-8">
                         {processingSteps.map((step, index) => (
                             <div
-                                key={step.id}
-                                className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${index < currentStep
-                                        ? "bg-green-500/10 border border-green-500/20"
+                                key={index}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${index < currentStep
+                                        ? "bg-green-500/20 text-green-400 border border-green-500/30"
                                         : index === currentStep
-                                            ? "bg-cyan-500/10 border border-cyan-500/20"
-                                            : "bg-white/5 border border-white/10 opacity-50"
+                                            ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 scale-105"
+                                            : "bg-white/5 text-slate-500 border border-white/10"
                                     }`}
                             >
-                                <div
-                                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold ${index < currentStep
-                                            ? "bg-green-500 text-white"
-                                            : index === currentStep
-                                                ? "bg-cyan-500 text-white"
-                                                : "bg-white/20 text-slate-400"
-                                        }`}
-                                >
-                                    {index < currentStep ? (
-                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                    ) : (
-                                        step.id
-                                    )}
-                                </div>
-                                <span
-                                    className={`text-sm font-medium ${index <= currentStep ? "text-white" : "text-slate-500"
-                                        }`}
-                                >
-                                    {step.label}
-                                </span>
+                                {index < currentStep ? (
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                ) : index === currentStep ? (
+                                    <span className="w-4 h-4 flex items-center justify-center">
+                                        <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+                                    </span>
+                                ) : (
+                                    <span className="w-4 h-4 flex items-center justify-center text-xs">{index + 1}</span>
+                                )}
+                                <span className="hidden sm:inline">{step.text.replace("...", "")}</span>
                             </div>
                         ))}
                     </div>
 
-                    {/* AI Confidence Preview */}
-                    {currentStep >= processingSteps.length - 1 && (
-                        <div className="mt-8 p-4 rounded-xl bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20">
+                    {/* AI Info Card */}
+                    {isComplete && (
+                        <div className="p-4 rounded-2xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 animate-fade-in">
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-sm text-slate-300">AI Confidence</span>
-                                <span className="text-lg font-bold text-cyan-400">94%</span>
+                                <span className="text-xl font-bold text-green-400">94%</span>
                             </div>
-                            <p className="text-xs text-slate-400">
-                                Routed to <span className="text-white font-medium">Water Department</span>
-                            </p>
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs text-slate-400">Assigned to:</span>
+                                <span className="text-sm font-medium text-white">Water Department</span>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Loading dots */}
+                    {!isComplete && (
+                        <div className="flex items-center justify-center gap-1">
+                            <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                            <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                            <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                         </div>
                     )}
                 </div>
