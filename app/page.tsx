@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 export default function Home() {
   const [isVisible, setIsVisible] = useState(false);
@@ -48,14 +49,14 @@ export default function Home() {
         </div>
 
         <div className="hidden md:flex items-center gap-8">
-          <a href="#features" className="text-slate-300 hover:text-white transition-colors text-sm font-medium">Features</a>
-          <a href="#how-it-works" className="text-slate-300 hover:text-white transition-colors text-sm font-medium">How It Works</a>
-          <a href="#about" className="text-slate-300 hover:text-white transition-colors text-sm font-medium">About</a>
+          <Link href="/dashboard" className="text-slate-300 hover:text-white transition-colors text-sm font-medium">Dashboard</Link>
+          <Link href="/citizen" className="text-slate-300 hover:text-white transition-colors text-sm font-medium">Submit Complaint</Link>
+          <Link href="/analytics" className="text-slate-300 hover:text-white transition-colors text-sm font-medium">Analytics</Link>
         </div>
 
-        <button className="px-5 py-2.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white text-sm font-medium hover:bg-white/20 transition-all duration-300">
+        <Link href="/citizen" className="px-5 py-2.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white text-sm font-medium hover:bg-white/20 transition-all duration-300">
           Get Started
-        </button>
+        </Link>
       </nav>
 
       {/* Hero Content */}
@@ -90,22 +91,21 @@ export default function Home() {
         <div
           className={`flex flex-col sm:flex-row items-center gap-4 mb-16 transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
         >
-          <button className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full text-white font-semibold text-lg shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all duration-300 hover:scale-105">
+          <Link href="/dashboard" className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full text-white font-semibold text-lg shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all duration-300 hover:scale-105">
             <span className="relative z-10 flex items-center gap-2">
               Explore Dashboard
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </span>
-          </button>
+          </Link>
 
-          <button className="px-8 py-4 bg-white/5 backdrop-blur-sm border border-white/20 rounded-full text-white font-semibold text-lg hover:bg-white/10 transition-all duration-300 flex items-center gap-2">
+          <Link href="/citizen" className="px-8 py-4 bg-white/5 backdrop-blur-sm border border-white/20 rounded-full text-white font-semibold text-lg hover:bg-white/10 transition-all duration-300 flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
-            Watch Demo
-          </button>
+            Submit Complaint
+          </Link>
         </div>
 
         {/* Stats Section */}
