@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
@@ -23,25 +23,37 @@ const departmentMap: Record<string, string> = {
     other: "General Services",
 };
 
-// Generate a random request ID
-const generateRequestId = () => {
-    const year = new Date().getFullYear();
-    const random = Math.floor(1000 + Math.random() * 9000);
-    return `CIV-${year}-${random}`;
-};
-
-export default function CitizenProcessingPage() {
+// Inner component that uses useSearchParams
+function ProcessingContent() {
     const searchParams = useSearchParams();
     const issueType = searchParams.get("type") || "other";
 
+    // All state initialized with SSR-safe defaults
+    const [mounted, setMounted] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
     const [isComplete, setIsComplete] = useState(false);
-    const [requestId] = useState(generateRequestId);
-    const [aiConfidence] = useState(Math.floor(88 + Math.random() * 10)); // 88-97%
+    const [requestId, setRequestId] = useState("CIV-0000-0000");
+    const [aiConfidence, setAiConfidence] = useState(90);
 
     const department = departmentMap[issueType] || "General Services";
 
+    // Generate random values only after mount (client-side)
     useEffect(() => {
+        setMounted(true);
+
+        // Generate request ID on client only
+        const year = new Date().getFullYear();
+        const random = Math.floor(1000 + Math.random() * 9000);
+        setRequestId(`CIV-${year}-${random}`);
+
+        // Generate AI confidence on client only
+        setAiConfidence(Math.floor(88 + Math.random() * 10));
+    }, []);
+
+    // Start animation only after mount
+    useEffect(() => {
+        if (!mounted) return;
+
         // Cycle through steps every 1000ms (1 second per step = 4 seconds total)
         const stepInterval = setInterval(() => {
             setCurrentStep((prev) => {
@@ -61,7 +73,14 @@ export default function CitizenProcessingPage() {
             clearInterval(stepInterval);
             clearTimeout(completeTimer);
         };
-    }, []);
+    }, [mounted]);
+
+    // Handle copy to clipboard safely
+    const handleCopy = () => {
+        if (typeof navigator !== "undefined" && navigator.clipboard) {
+            navigator.clipboard.writeText(requestId);
+        }
+    };
 
     // Success state - no redirect, show confirmation
     if (isComplete) {
@@ -80,7 +99,7 @@ export default function CitizenProcessingPage() {
 
                         {/* Success checkmark */}
                         <div className="relative w-28 h-28 mx-auto">
-                            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 shadow-xl shadow-green-500/30 flex items-center justify-center animate-bounce-slow">
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 shadow-xl shadow-green-500/30 flex items-center justify-center">
                                 <svg className="w-14 h-14 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                 </svg>
@@ -104,7 +123,7 @@ export default function CitizenProcessingPage() {
                             <div className="flex items-center justify-center gap-2">
                                 <span className="text-2xl font-mono font-bold text-cyan-400">{requestId}</span>
                                 <button
-                                    onClick={() => navigator.clipboard.writeText(requestId)}
+                                    onClick={handleCopy}
                                     className="p-2 rounded-lg hover:bg-white/10 transition-colors"
                                     title="Copy to clipboard"
                                 >
@@ -271,5 +290,38 @@ export default function CitizenProcessingPage() {
                 </p>
             </div>
         </div>
+    );
+}
+
+// Loading fallback for Suspense
+function LoadingFallback() {
+    return (
+        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] px-4">
+            <div className="max-w-md w-full text-center">
+                <div className="relative mb-10">
+                    <div className="w-32 h-32 mx-auto">
+                        <div className="absolute inset-0 rounded-full border-4 border-cyan-500/20" />
+                        <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-cyan-400 border-r-blue-500 animate-spin" style={{ animationDuration: "1.5s" }} />
+                        <div className="absolute inset-2 rounded-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+                            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
+                                <svg className="w-10 h-10 text-white animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 15.5m14.8-.2l-1.3 3.9c-.09.27-.336.45-.62.45H6.12a.646.646 0 01-.62-.45L5.2 15.5" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h2 className="text-2xl font-bold text-white mb-3">Loading...</h2>
+            </div>
+        </div>
+    );
+}
+
+// Main page component with Suspense wrapper for useSearchParams
+export default function CitizenProcessingPage() {
+    return (
+        <Suspense fallback={<LoadingFallback />}>
+            <ProcessingContent />
+        </Suspense>
     );
 }
