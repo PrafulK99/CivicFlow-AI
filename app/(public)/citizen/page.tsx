@@ -24,9 +24,9 @@ export default function CitizenPage() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        // Small delay for button animation
+        // Small delay for button animation, pass issue type for department mapping
         setTimeout(() => {
-            router.push("/processing");
+            router.push(`/submit-processing?type=${issueType}`);
         }, 300);
     };
 
