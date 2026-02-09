@@ -2,8 +2,7 @@
 
 import { use, useState } from "react";
 import Link from "next/link";
-import AppLayout from "@/components/layout/AppLayout";
-import { getRequestById, getStatusColor, getPriorityColor } from "@/lib/mockData";
+import { getRequestById, getPriorityColor } from "@/lib/mockData";
 
 interface RequestDetailPageProps {
     params: Promise<{ id: string }>;
@@ -37,20 +36,18 @@ export default function RequestDetailPage({ params }: RequestDetailPageProps) {
 
     if (!request) {
         return (
-            <AppLayout>
-                <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
-                    <div className="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mb-6">
-                        <svg className="w-10 h-10 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <h2 className="text-xl font-bold text-white mb-2">Request Not Found</h2>
-                    <p className="text-slate-400 mb-6">The request you&apos;re looking for doesn&apos;t exist.</p>
-                    <Link href="/dashboard" className="px-6 py-3 bg-cyan-500/20 text-cyan-400 rounded-xl hover:bg-cyan-500/30 transition-colors">
-                        Back to Dashboard
-                    </Link>
+            <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
+                <div className="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mb-6">
+                    <svg className="w-10 h-10 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                 </div>
-            </AppLayout>
+                <h2 className="text-xl font-bold text-white mb-2">Request Not Found</h2>
+                <p className="text-slate-400 mb-6">The request you&apos;re looking for doesn&apos;t exist.</p>
+                <Link href="/dashboard" className="px-6 py-3 bg-cyan-500/20 text-cyan-400 rounded-xl hover:bg-cyan-500/30 transition-colors">
+                    Back to Dashboard
+                </Link>
+            </div>
         );
     }
 
@@ -73,7 +70,7 @@ export default function RequestDetailPage({ params }: RequestDetailPageProps) {
     };
 
     return (
-        <AppLayout>
+        <>
             {/* Success Toast */}
             {showSuccess && (
                 <div className="fixed top-20 right-6 z-50 animate-slide-in">
@@ -134,8 +131,8 @@ export default function RequestDetailPage({ params }: RequestDetailPageProps) {
                     <div className="flex flex-wrap gap-2">
                         <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border ${getLocalStatusColor(currentStatus)}`}>
                             <span className={`w-2 h-2 rounded-full ${currentStatus === "resolved" ? "bg-green-400" :
-                                    currentStatus === "in-progress" ? "bg-yellow-400 animate-pulse" :
-                                        currentStatus === "assigned" ? "bg-blue-400" : "bg-red-400 animate-pulse"
+                                currentStatus === "in-progress" ? "bg-yellow-400 animate-pulse" :
+                                    currentStatus === "assigned" ? "bg-blue-400" : "bg-red-400 animate-pulse"
                                 }`} />
                             {currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1).replace("-", " ")}
                         </span>
@@ -174,10 +171,10 @@ export default function RequestDetailPage({ params }: RequestDetailPageProps) {
                                     return (
                                         <div key={step.key} className="flex items-start gap-4 relative">
                                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center z-10 transition-all duration-300 ${isComplete
-                                                    ? "bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/20"
-                                                    : isCurrent
-                                                        ? "bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/20 animate-pulse"
-                                                        : "bg-white/5 border border-white/10"
+                                                ? "bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/20"
+                                                : isCurrent
+                                                    ? "bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/20 animate-pulse"
+                                                    : "bg-white/5 border border-white/10"
                                                 }`}>
                                                 {isComplete ? (
                                                     <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -219,8 +216,8 @@ export default function RequestDetailPage({ params }: RequestDetailPageProps) {
                                 onClick={() => handleStatusChange("in-progress")}
                                 disabled={currentStatus === "in-progress" || currentStatus === "resolved"}
                                 className={`px-5 py-3 rounded-xl font-medium transition-all flex items-center gap-2 ${currentStatus === "in-progress" || currentStatus === "resolved"
-                                        ? "bg-white/5 text-slate-500 border border-white/10 cursor-not-allowed"
-                                        : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 hover:bg-yellow-500/30 hover:scale-105"
+                                    ? "bg-white/5 text-slate-500 border border-white/10 cursor-not-allowed"
+                                    : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 hover:bg-yellow-500/30 hover:scale-105"
                                     }`}
                             >
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -233,8 +230,8 @@ export default function RequestDetailPage({ params }: RequestDetailPageProps) {
                                 onClick={() => handleStatusChange("resolved")}
                                 disabled={currentStatus === "resolved"}
                                 className={`px-5 py-3 rounded-xl font-medium transition-all flex items-center gap-2 ${currentStatus === "resolved"
-                                        ? "bg-white/5 text-slate-500 border border-white/10 cursor-not-allowed"
-                                        : "bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30 hover:scale-105"
+                                    ? "bg-white/5 text-slate-500 border border-white/10 cursor-not-allowed"
+                                    : "bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30 hover:scale-105"
                                     }`}
                             >
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -281,8 +278,8 @@ export default function RequestDetailPage({ params }: RequestDetailPageProps) {
                             <div className="p-3 rounded-xl bg-white/5">
                                 <span className="text-xs text-slate-500 uppercase tracking-wide">Auto-Priority</span>
                                 <p className={`font-medium ${request.priority === 'high' ? 'text-orange-400' :
-                                        request.priority === 'critical' ? 'text-red-400' :
-                                            request.priority === 'medium' ? 'text-yellow-400' : 'text-green-400'
+                                    request.priority === 'critical' ? 'text-red-400' :
+                                        request.priority === 'medium' ? 'text-yellow-400' : 'text-green-400'
                                     }`}>
                                     {request.priority.charAt(0).toUpperCase() + request.priority.slice(1)}
                                 </p>
@@ -348,6 +345,6 @@ export default function RequestDetailPage({ params }: RequestDetailPageProps) {
                     )}
                 </div>
             </div>
-        </AppLayout>
+        </>
     );
 }

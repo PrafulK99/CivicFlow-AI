@@ -1,6 +1,5 @@
 "use client";
 
-import AppLayout from "@/components/layout/AppLayout";
 import { analyticsData } from "@/lib/mockData";
 import {
     BarChart,
@@ -72,7 +71,7 @@ export default function AnalyticsPage() {
     const mostActiveDept = "Water Department";
 
     return (
-        <AppLayout>
+        <>
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
                 <div>
@@ -310,6 +309,6 @@ export default function AnalyticsPage() {
                     </table>
                 </div>
             </div>
-        </AppLayout>
+        </>
     );
 }

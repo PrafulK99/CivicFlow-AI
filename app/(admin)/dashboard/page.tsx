@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import AppLayout from "@/components/layout/AppLayout";
 import { mockRequests, getStatusColor, getPriorityColor } from "@/lib/mockData";
 
 export default function DashboardPage() {
@@ -32,7 +31,7 @@ export default function DashboardPage() {
     };
 
     return (
-        <AppLayout>
+        <>
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
                 <div>
@@ -161,8 +160,8 @@ export default function DashboardPage() {
                                         key={filter.key}
                                         onClick={() => setStatusFilter(filter.key)}
                                         className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${statusFilter === filter.key
-                                                ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
-                                                : "bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10"
+                                            ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                                            : "bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10"
                                             }`}
                                     >
                                         {filter.label}
@@ -237,8 +236,8 @@ export default function DashboardPage() {
                                     <td className="px-6 py-4">
                                         <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(request.status)}`}>
                                             <span className={`w-1.5 h-1.5 rounded-full ${request.status === "resolved" ? "bg-green-400" :
-                                                    request.status === "in-progress" ? "bg-yellow-400 animate-pulse" :
-                                                        request.status === "assigned" ? "bg-blue-400" : "bg-red-400 animate-pulse"
+                                                request.status === "in-progress" ? "bg-yellow-400 animate-pulse" :
+                                                    request.status === "assigned" ? "bg-blue-400" : "bg-red-400 animate-pulse"
                                                 }`} />
                                             {request.status.charAt(0).toUpperCase() + request.status.slice(1).replace("-", " ")}
                                         </span>
@@ -280,6 +279,6 @@ export default function DashboardPage() {
                     </div>
                 </div>
             </div>
-        </AppLayout>
+        </>
     );
 }
